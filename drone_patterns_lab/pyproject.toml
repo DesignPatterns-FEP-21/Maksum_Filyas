@@ -1,0 +1,19 @@
+[project]
+name = "drone-patterns-lab"
+version = "0.1.0"
+description = "Laboratory project: drone mission framework using design patterns (Template Method, Bridge, Strategy, Observer, Chain of Responsibility, Abstract Factory)."
+requires-python = ">=3.10"
+dependencies = [
+  # FastAPI — фреймворк для побудови веб-API.
+  "fastapi",
+  # Uvicorn — ASGI-сервер для запуску FastAPI-додатку.
+  "uvicorn",
+  # Pydantic — для валідації та опису моделей даних (використовується у FastAPI).
+  "pydantic",
+]
+
+[project.optional-dependencies]
+dev = [
+  # Pytest — фреймворк для юніт-тестів.
+  "pytest"
+]

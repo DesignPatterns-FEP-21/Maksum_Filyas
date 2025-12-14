@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Сервіс FastAPI 
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app
+      - ./frontend:/app/frontend
+      - ./smart_planner.log:/app/smart_planner.log
+      - ./tests:/app/tests
+    # Завантажуємо змінні середовища з .env файлу
+    env_file:
+      - ./.env
+    # Додаємо залежність від сервісу MongoDB
+    depends_on:
+      - mongo
+    container_name: smart_planner_app
+
+  # Сервіс MongoDB 
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    container_name: smart_planner_mongo
+
+  # (Опційно) mongo-express для перегляду БД 
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+    depends_on:
+      - mongo
+    container_name: smart_planner_mongo_express
+
+volumes:
+  mongo_data:

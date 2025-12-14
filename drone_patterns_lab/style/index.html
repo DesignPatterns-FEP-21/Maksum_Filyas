@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Mission Control</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚁 Drone Control System</h1>
+            <p>Lab 7: Design Patterns Implementation</p>
+        </header>
+
+        <main>
+            <div class="control-panel">
+                <h2>Launch Mission</h2>
+                <form id="missionForm">
+                    <label>Mission Type:</label>
+                    <select id="missionType">
+                        <option value="Agriculture">Agriculture (Air)</option>
+                        <option value="SeaExploration">Sea Exploration</option>
+                        <option value="DefectsDetection">Defects Detection</option>
+                        <option value="Rescue">Search & Rescue</option>
+                    </select>
+
+                    <label>Platform:</label>
+                    <select id="platformType">
+                        <option value="Air">Air Drone</option>
+                        <option value="Sea">Sea Drone</option>
+                        <option value="Surface">Surface Rover</option>
+                    </select>
+
+                    <label>Environment:</label>
+                    <select id="envType">
+                        <option value="Air">Air (Windy)</option>
+                        <option value="Sea">Sea (Waves)</option>
+                        <option value="Surface">Surface (Rough)</option>
+                    </select>
+
+                    <button type="button" onclick="runMission()">🚀 START MISSION</button>
+                </form>
+            </div>
+
+            <div class="status-panel">
+                <h2>Mission Status</h2>
+                <div id="output" class="console-output">Waiting for command...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function runMission() {
+            const output = document.getElementById('output');
+            output.innerHTML = "Initializing...";
+            
+            const data = {
+                mission_type: document.getElementById('missionType').value,
+                platform_type: document.getElementById('platformType').value,
+                environment_type: document.getElementById('envType').value,
+                parameters: {}
+            };
+
+            try {
+                // Відправка запиту на локальний API сервер
+                const response = await fetch('http://127.0.0.1:8000/mission/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                output.innerHTML = `> Mission ID: ${result.mission_id}<br>> Status: ${result.status}<br>> Check terminal for live logs.`;
+            } catch (error) {
+                output.innerHTML = `> Error: API is offline.<br>> Make sure 'main.py' is running.`;
+            }
+        }
+    </script>
+</body>
+</html>

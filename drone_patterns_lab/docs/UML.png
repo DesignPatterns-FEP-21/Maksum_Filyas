@@ -1,0 +1,50 @@
+classDiagram
+    %% Factory & Client
+    Client ..> MissionFactory
+    MissionFactory ..> DroneMission : Creates
+    MissionFactory ..> Environment : Creates
+    
+    %% Template Method
+    class DroneMission {
+        <<Abstract>>
+        +execute_mission()
+        +perform_payload_action()*
+    }
+    class AgricultureMission {
+        +perform_payload_action()
+    }
+    DroneMission <|-- AgricultureMission
+
+    %% Bridge
+    DroneMission --> DroneController
+    class DroneController {
+        +goto(coords)
+    }
+    DroneController o-- MovementImplementor
+    class MovementImplementor {
+        <<Interface>>
+        +move_to()
+    }
+    MovementImplementor <|-- AirPlatform
+    MovementImplementor <|-- SeaPlatform
+
+    %% Strategy
+    DroneMission o-- ReactionStrategy
+    class ReactionStrategy {
+        <<Interface>>
+        +react()
+    }
+    ReactionStrategy <|-- WindReaction
+
+    %% Observer
+    Environment ..> EventBus : Publishes
+    DroneMission ..> EventBus : Subscribes
+
+    %% CoR
+    DroneMission --> Handler : FailSafe
+    class Handler {
+        +handle()
+        +set_next()
+    }
+    Handler <|-- ReRouteHandler
+    Handler <|-- EmergencyHandler

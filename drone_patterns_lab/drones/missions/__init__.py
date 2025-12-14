@@ -1,0 +1,5 @@
+from .agriculture import AgricultureMission
+from .sea_exploration import SeaExplorationMission
+from .defects_detection import DefectsDetectionMission
+from .rescue import RescueMission
+from .pollution_monitoring import PollutionMonitoringMission

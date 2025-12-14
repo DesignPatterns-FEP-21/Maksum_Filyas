@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Day Planner</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ваш розумний планувальник</h1>
+        
+        <div class="weather-box">
+            <h2>Поточна погода: {{ location }}</h2>
+            {% if current_weather != "N/A" %}
+                <p class="condition">{{ current_weather.condition }} ({{ current_weather.description }})</p>
+                <p class="temp">{{ current_weather.temperature }} °C</p>
+            {% else %}
+                <p>Натисніть "Оновити", щоб отримати дані.</p>
+            {% endif %}
+        </div>
+        
+        <div class="plan-box">
+            <h2>План на сьогодні</h2>
+            <ul id="activity-list">
+                {% for activity in current_plan %}
+                    <li>
+                        <strong>{{ activity.name }}</strong>
+                        <span>(Тип: {{ activity.type }}, Пріоритет: {{ activity.priority }})</span>
+                    </li>
+                {% else %}
+                    <li>Немає активностей. Спробуйте оновити план.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <button id="refreshButton">Оновити план</button>
+        <p id="status"></p>
+    </div>
+
+    <script>
+        document.getElementById('refreshButton').addEventListener('click', async () => {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = 'Оновлення...';
+            try {
+                // Викликаємо ендпоінт примусового оновлення [cite: 26]
+                const response = await fetch('/api/v1/plan/refresh', { method: 'POST' });
+                const data = await response.json();
+                statusEl.textContent = data.message;
+                
+                // Перезавантажуємо сторінку через 2 секунди, 
+                // щоб побачити новий план (якщо він оновився)
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+
+            } catch (error) {
+                statusEl.textContent = 'Помилка оновлення.';
+                console.error('Error refreshing plan:', error);
+            }
+        });
+    </script>
+</body>
+</html>

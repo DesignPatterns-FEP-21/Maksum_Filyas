@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+motor
+pydantic[email]<2
+python-dotenv
+httpx              # Для асинхронних API запитів
+apscheduler        # Для фонових завдань 
+jinja2             # Для HTML шаблонів 
+pytest
+pytest-asyncio
+respx              # Для мокінгу (імітації) HTTP-запитів до API погоди

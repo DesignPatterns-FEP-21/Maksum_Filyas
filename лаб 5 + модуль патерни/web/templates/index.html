@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartApp IoT Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>SmartApp IoT Dashboard</h1>
+    </header>
+    <main class="container">
+        {% for device in devices %}
+            <div class="device-card" id="{{ device.device_id }}">
+                <h3>
+                    {% if device.type == "smart_speaker" %} 🔊 Smart Speaker {% endif %}
+                    {% if device.type == "smart_light" %} 💡 Smart Light {% endif %}
+                    {% if device.type == "smart_curtains" %} 🪟 Smart Curtains {% endif %}
+                    {% if device.type == "unknown" %} ❓ Unknown Device {% endif %}
+                </h3>
+                <p>ID: <code>{{ device.device_id }}</code></p>
+                <p>Connection: <code>{{ device.connection }}</code></p>
+
+                {% if device.connection == "error" %}
+                    <p class="status error">🔴 OFFLINE</p>
+                {% else %}
+                    {% if device.type == "smart_speaker" %}
+                        <p class="status {{ 'on' if device.is_on else 'off' }}">
+                            Power: {{ 'ON' if device.is_on else 'OFF' }}
+                        </p>
+                        <form action="/toggle_speaker" method="post">
+                            <button type="submit">Toggle Power</button>
+                        </form>
+                        <hr>
+                        <p>Volume: {{ device.volume }}</p>
+                        <form action="/set_volume" method="post" class="slider-form">
+                            <input type="range" name="volume" min="0" max="100" value="{{ device.volume }}">
+                            <button type="submit">Set</button>
+                        </form>
+                    {% endif %}
+
+                    {% if device.type == "smart_light" %}
+                        <p class="status {{ 'on' if device.is_on else 'off' }}">
+                            Power: {{ 'ON' if device.is_on else 'OFF' }}
+                        </p>
+                        <form action="/toggle_light" method="post">
+                            <button type="submit">Toggle Power</button>
+                        </form>
+                        <hr>
+                        <p>Brightness: {{ device.brightness }}</p>
+                        <form action="/set_brightness" method="post" class="slider-form">
+                            <input type="range" name="brightness" min="0" max="100" value="{{ device.brightness }}">
+                            <button type="submit">Set</button>
+                        </form>
+                    {% endif %}
+
+                    {% if device.type == "smart_curtains" %}
+                        <p class="status {{ 'on' if device.is_open else 'off' }}">
+                            State: {{ 'OPEN' if device.is_open else 'CLOSED' }}
+                        </p>
+                        <form action="/toggle_curtains" method="post">
+                            <button type="submit">Toggle Open/Close</button>
+                        </form>
+                        <hr>
+                        <p>Position: {{ device.position }}%</p>
+                        <form action="/set_position" method="post" class="slider-form">
+                            <input type="range" name="position" min="0" max="100" value="{{ device.position }}">
+                            <button type="submit">Set</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </main>
+</body>
+</html>
